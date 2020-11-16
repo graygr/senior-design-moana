@@ -1,7 +1,7 @@
 #include <Servo.h>
 #include <Wire.h>
 
-Servo rudder;
+Servo pitch;
 
 void setup() {
   // put your setup code here, to run once:
@@ -9,10 +9,10 @@ void setup() {
   // Treat ESC like a servo 
 
   // Assign PIN 6 to servo, with range between 1000ms and 2000ms
-  rudder.attach(6, 1000, 2000);  
+  pitch.attach(6, 1000, 2000);  
 
-  // Open I2C on port 5
-  Wire.begin(5);
+  // Open I2C on port 6
+  Wire.begin(6);
   // Listen to I2C call to this port, call receiveEvent() on receive
   Wire.onReceive(receiveEvent);
 
@@ -58,7 +58,7 @@ void receiveEvent(int howMany) {
   Serial.println(dur);
 
   // Write position  
-  rudder.write(pos);
+  pitch.write(pos);
   // Wait until next command
   delay(dur);
 }

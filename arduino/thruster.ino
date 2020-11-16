@@ -7,12 +7,13 @@ void setup() {
   // put your setup code here, to run once:
 
   // Treat ESC like a servo 
+  // Map to pin 6 with signals between 1000 and 2000 ms
   thrustESC.attach(6, 1000, 2000);  
   Wire.begin(4);
   Wire.onReceive(receiveEvent);
   Serial.begin(9600);
 
-  // Arm ESC with throttle writing
+  // Arm ESC manually with low - high - low signals
   thrustESC.write(0);
   delay(500);
   thrustESC.write(180);
@@ -28,6 +29,8 @@ void loop() {
 }
 
 void receiveEvent(int howMany) {
+  
+  // Receive serial data and store in character array
   char cmd[7];
   int i = 0;
   while(0 < Wire.available())
@@ -59,7 +62,8 @@ void receiveEvent(int howMany) {
   Serial.println(spd);
   Serial.print("Duration is");
   Serial.println(dur);
-  
+
+  // Write out desired speed to the ESC  
   thrustESC.write(spd);
   delay(dur);
 }
