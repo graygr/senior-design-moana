@@ -3,6 +3,6 @@
 
 #include <string>
 
-bool writeStream(int file_i2c, string output);
+bool writeStream(int file_i2c, std::string output);
 
 #endif /* I2C_H */
