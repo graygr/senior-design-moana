@@ -24,6 +24,8 @@ st_cmd_t txMsg;
 const uint8_t sendData[8] = {0,10,20,40,80,100,120,127};
 // Transmit buffer
 uint8_t txBuffer[8] = {};
+// Message buffer for writing
+uint8_t msgBuffer[8] = {};
 
 void setup() 
 { 
@@ -37,9 +39,10 @@ void setup()
   Wire.onRequest(sendData);
 }
 
-void loop() {
-    // If first byte is negative, then no new message
-	clearBuffer(&Buffer[0]);
+void loop() 
+{
+	// If first byte is negative, then no new message
+	clearBuffer(&txBuffer[0]);
 	// Setup CAN packet.
 	txMsg.ctrl.ide = MESSAGE_PROTOCOL;  // Set CAN protocol (0: CAN 2.0A, 1: CAN 2.0B)
 	txMsg.id.ext   = MESSAGE_ID;        // Set message ID
@@ -52,6 +55,11 @@ void loop() {
 	while(can_cmd(&txMsg) != CAN_CMD_ACCEPTED);
 	// Wait for command to finish executing
 	while(can_get_status(&txMsg) == CAN_STATUS_NOT_COMPLETED);
+	
+	// Send copy of the buffer back
+	msgBuffer = txBuffer;
+	sendData(&msgBuffer[0]);
+	
 	// Transmit is now complete. Wait a bit and loop
 	delay(500);
 }
@@ -66,7 +74,12 @@ void receiveEvent(int bytes) {
 }
 
 // This is called when we need to send data back to the jetson from the CAN network over I2C
-void sendData()
+// Currently dumps all messages sent back to the jetson
+// TODO: Dump whenever receives a CAN message
+void sendData(uint8_t *msg)
 {
-    Wire.write();
+	for(int i = 0; i < 8; ++i)
+	{
+		Wire.write(msg[i]);
+	}
 }
