@@ -30,11 +30,7 @@ print("#         <><            <><       <><          <><     <><       ><>    
 print("#########################################################################################")
 
 while True:
-<<<<<<< HEAD
     print("\nHello, welcome to MOANAINTERFACE (name pending on something better)\n\nWhat mode would you like to operate in?\n\t1. Subsystem debug\n\t2. Scripted operations\n\t3. Mission planner\n\t4. I'm scared and need help")
-=======
-print("\nHello, welcome to MOANAINTERFACE (name pending on something better)\n\nWhat mode would you like to operate in?\n\t1. Subsystem debug\n\t2. Scripted operations\n\t3. Mission planner\n\t4. Raw Input")
->>>>>>> 90365f070d75f360def38a33bfbf424f426f2daa
 
     ui_input = input("")
     if not ui_input:
@@ -213,9 +209,5 @@ print("\nHello, welcome to MOANAINTERFACE (name pending on something better)\n\n
             sys.stdout.close()
     else:
         print("\nERROR: Invalid number, please try again with a number between 1 and 4")
-<<<<<<< HEAD
-    #number = readNumber()
-=======
     
     number = readNumber()
->>>>>>> 90365f070d75f360def38a33bfbf424f426f2daa
