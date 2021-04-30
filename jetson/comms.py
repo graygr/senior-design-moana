@@ -56,7 +56,16 @@ print("\nHello, welcome to MOANAINTERFACE (name pending on something better)\n\n
                 # Add data parameters
                 
                 print("Sending command to run thruster at " + speed_param + "%...\n"
-                writeNumber
+                # Write thruster ID
+                writeNumber(2)
+                # Write thruster direction
+                writeNumber(1)
+                # Write thruster speed
+                writeNumber(speed_param)
+                # fill in 5 empty bytes
+                for i in range(5):
+                      writeNumber(0)
+                
                 
             if(cmd_input == 2):
                 # Turn thruster off
