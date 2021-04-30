@@ -29,7 +29,7 @@ print("#         <><            <><       <><          <><     <><       ><>    
 print("#########################################################################################")
 
 while True:
-print("\nHello, welcome to MOANAINTERFACE (name pending on something better)\n\nWhat mode would you like to operate in?\n\t1. Subsystem debug\n\t2. Scripted operations\n\t3. Mission planner\n\t4. I'm scared and need help")
+    print("\nHello, welcome to MOANAINTERFACE (name pending on something better)\n\nWhat mode would you like to operate in?\n\t1. Subsystem debug\n\t2. Scripted operations\n\t3. Mission planner\n\t4. I'm scared and need help")
 
     ui_input = input("")
     if not ui_input:
@@ -202,5 +202,4 @@ print("\nHello, welcome to MOANAINTERFACE (name pending on something better)\n\n
         print("\nToo bad bud, haven't written anything for this yet. Better luck next time! - last updated 4/21/21")
     else:
         print("\nERROR: Invalid number, please try again with a number between 1 and 4")
-    writeNumber(var)
-    number = readNumber()
+    #number = readNumber()
