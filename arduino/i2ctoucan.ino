@@ -23,11 +23,10 @@ uint8_t conv_arr[3] = {};
 
 // CAN message object
 st_cmd_t txMsg;
+st_cmd_t rxMsg;
 
 // Transmit buffer
 uint8_t txBuffer[8] = {};
-// Message buffer for writing
-uint8_t msgBuffer[8] = {};
 
 void setup() 
 { 
@@ -43,6 +42,17 @@ void setup()
 
 void loop() 
 {
+  // Listen for message on CAN network and write out if needed
+  rxMsg.cmd = CMD_RX_DATA;
+	
+  // Wait for the command to be accepted by the controller
+  while(can_cmd(&rxMsg) != CAN_CMD_ACCEPTED);
+  // Wait for command to finish executing
+  while(can_get_status(&rxMsg) == CAN_STATUS_NOT_COMPLETED);
+  // Data is now available in the message object
+  // Print received data to the terminal
+  sendCanData(&rxMsg);
+	
   // If first byte is negative, then no new message
   if(txBuffer[0] != 255)
   { 
@@ -70,12 +80,6 @@ void loop()
     
     txBuffer[0] = 255;
   }
-  // Transmit is now complete. Wait a bit and loop
-//  for(int i = 0; i < 8; ++i)
-//  {
-//    Serial.print(txBuffer[i]);
-//    Serial.print(" ");
-//  }
   delay(500);
 }
 
@@ -96,9 +100,10 @@ void receiveEvent(int bytes) {
 // TODO: Dump whenever receives a CAN message
 void sendData(uint8_t *msg)
 {
-  for(int i = 0; i < 8; ++i)
+  int i = 0;
+  while(msg[i] != '\0')
   {
-    Wire.write(msg[i]);
+    Wire.write(msg[i++]);
   }
 }
 
@@ -131,6 +136,38 @@ void serialPrintData(st_cmd_t *msg){
     Serial.print(textBuffer);
   }
   Serial.print("\r\n");
+}
+
+
+void sendCanData(st_cmd_t *msg){
+  char textBuffer[50] = {0};
+  if (msg->ctrl.ide>0){
+    sprintf(textBuffer,"id %d ",msg->id.ext);
+  }
+  else
+  {
+    sprintf(textBuffer,"id %04x ",msg->id.std);
+  }
+  sendData(textBuffer);
+ 
+  //  IDE
+  sprintf(textBuffer,"ide %d ",msg->ctrl.ide);
+  sendData(textBuffer);
+  //  RTR
+  sprintf(textBuffer,"rtr %d ",msg->ctrl.rtr);
+  sendData(textBuffer);
+  //  DLC
+  sprintf(textBuffer,"dlc %d ",msg->dlc);
+  sendData(textBuffer);
+  //  Data
+  sprintf(textBuffer,"data ");
+  sendData(textBuffer);
+ 
+  for (int i =0; i<msg->dlc; i++){
+    sprintf(textBuffer,"%02X ",msg->pt_data[i]);
+    sendData(textBuffer);
+  }
+  sendData("\r\n");
 }
 
 // The input is a 3 byte array
