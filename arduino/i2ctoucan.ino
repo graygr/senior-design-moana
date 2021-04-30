@@ -18,6 +18,9 @@ int i2cAddress = 0x40;
 int i2c_read = 0;
 int counter = 0;
 
+// @ANDREW use this
+uint8_t conv_arr[3] = {};
+
 // CAN message object
 st_cmd_t txMsg;
 
@@ -128,4 +131,29 @@ void serialPrintData(st_cmd_t *msg){
     Serial.print(textBuffer);
   }
   Serial.print("\r\n");
+}
+
+// The input is a 3 byte array
+// First byte is sign. 1 is neg, 2 is positive
+// Second byte is rounded whole
+// Third byte is fraction, calc by (val * 100) - (whole * 100)
+// To undo, reverse process
+float three_byte_arr_to_float()
+{
+	int sign;
+	
+	if(conv_arr[0] == 0)
+	{
+		return 0;
+	}
+	else if(conv_arr[0] == 1)
+	{
+		sign = -1;
+	}
+	else if(conv_arr[0] == 2)
+	{
+		sign = 1;
+	}
+	
+	return (conv_arr[1] + (conv_arr[2] / 100)) * sign;
 }
