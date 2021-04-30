@@ -16,12 +16,11 @@
 
 int i2cAddress = 0x40;
 int i2c_read = 0;
+int counter = 0;
 
 // CAN message object
 st_cmd_t txMsg;
 
-// Array of test data to send
-const uint8_t sendData[8] = {0,10,20,40,80,100,120,127};
 // Transmit buffer
 uint8_t txBuffer[8] = {};
 // Message buffer for writing
@@ -41,38 +40,51 @@ void setup()
 
 void loop() 
 {
-	// If first byte is negative, then no new message
-	if(txBuffer[0] == -1)
-	{	
-		// Setup CAN packet.
-		txMsg.ctrl.ide = MESSAGE_PROTOCOL;  // Set CAN protocol (0: CAN 2.0A, 1: CAN 2.0B)
-		txMsg.id.ext   = MESSAGE_ID;        // Set message ID
-		txMsg.dlc      = MESSAGE_LENGTH;    // Data length: 8 bytes
-		txMsg.ctrl.rtr = MESSAGE_RTR;       // Set rtr bit
+  // If first byte is negative, then no new message
+  if(txBuffer[0] != 255)
+  { 
+    Serial.print("Sending message");
+    // Setup CAN packet.
+    txMsg.ctrl.ide = MESSAGE_PROTOCOL;  // Set CAN protocol (0: CAN 2.0A, 1: CAN 2.0B)
+    txMsg.id.ext   = MESSAGE_ID;        // Set message ID
+    txMsg.dlc      = MESSAGE_LENGTH;    // Data length: 8 bytes
+    txMsg.ctrl.rtr = MESSAGE_RTR;       // Set rtr bit
 
-		// Send command to the CAN port controller
-		txMsg.cmd = CMD_TX_DATA;       // send message
-		// Wait for the command to be accepted by the controller
-		while(can_cmd(&txMsg) != CAN_CMD_ACCEPTED);
-		// Wait for command to finish executing
-		while(can_get_status(&txMsg) == CAN_STATUS_NOT_COMPLETED);
+    // Send command to the CAN port controller
+    txMsg.cmd = CMD_TX_DATA;       // send message
+    // Wait for the command to be accepted by the controller
+    while(can_cmd(&txMsg) != CAN_CMD_ACCEPTED);
+    // Wait for command to finish executing
+    while(can_get_status(&txMsg) == CAN_STATUS_NOT_COMPLETED);
 
-		// Send copy of the buffer back
-		msgBuffer = txBuffer;
-		sendData(&msgBuffer[0]);
-		
-		txBuffer[0] = -1;
-	}
-	// Transmit is now complete. Wait a bit and loop
-	delay(500);
+    // Print out msg info to serial just in case
+    Serial.print("CAN Message sent: \n");
+    serialPrintData(&txMsg);
+      
+    // Send copy of the buffer back
+    // TODO: This
+    //sendData(&msgBuffer[0]);
+    
+    txBuffer[0] = 255;
+  }
+  // Transmit is now complete. Wait a bit and loop
+//  for(int i = 0; i < 8; ++i)
+//  {
+//    Serial.print(txBuffer[i]);
+//    Serial.print(" ");
+//  }
+  delay(500);
 }
 
 // This is called when we send a command over I2C to the CAN network
-// ***This could cause issues with reading all 8 on a single receive
 void receiveEvent(int bytes) {
-  for(int i = 0; i < 8; ++i)
+  txBuffer[counter] = Wire.read();    // read one character from the I2C
+  Serial.print(txBuffer[counter]);
+  Serial.print("\n");
+  ++counter;
+  if(counter > 7)
   {
-  	txBuffer[i] = Wire.read();    // read one character from the I2C
+    counter = 0;
   }
 }
 
@@ -81,8 +93,39 @@ void receiveEvent(int bytes) {
 // TODO: Dump whenever receives a CAN message
 void sendData(uint8_t *msg)
 {
-	for(int i = 0; i < 8; ++i)
-	{
-		Wire.write(msg[i]);
-	}
+  for(int i = 0; i < 8; ++i)
+  {
+    Wire.write(msg[i]);
+  }
+}
+
+void serialPrintData(st_cmd_t *msg){
+  char textBuffer[50] = {0};
+  if (msg->ctrl.ide>0){
+    sprintf(textBuffer,"id %d ",msg->id.ext);
+  }
+  else
+  {
+    sprintf(textBuffer,"id %04x ",msg->id.std);
+  }
+  Serial.print(textBuffer);
+ 
+  //  IDE
+  sprintf(textBuffer,"ide %d ",msg->ctrl.ide);
+  Serial.print(textBuffer);
+  //  RTR
+  sprintf(textBuffer,"rtr %d ",msg->ctrl.rtr);
+  Serial.print(textBuffer);
+  //  DLC
+  sprintf(textBuffer,"dlc %d ",msg->dlc);
+  Serial.print(textBuffer);
+  //  Data
+  sprintf(textBuffer,"data ");
+  Serial.print(textBuffer);
+ 
+  for (int i =0; i<msg->dlc; i++){
+    sprintf(textBuffer,"%02X ",msg->pt_data[i]);
+    Serial.print(textBuffer);
+  }
+  Serial.print("\r\n");
 }
