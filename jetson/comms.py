@@ -29,7 +29,7 @@ print("#         <><            <><       <><          <><     <><       ><>    
 print("#########################################################################################")
 
 while True:
-print("\nHello, welcome to MOANAINTERFACE (name pending on something better)\n\nWhat mode would you like to operate in?\n\t1. Subsystem debug\n\t2. Scripted operations\n\t3. Mission planner\n\t4. I'm scared and need help")
+print("\nHello, welcome to MOANAINTERFACE (name pending on something better)\n\nWhat mode would you like to operate in?\n\t1. Subsystem debug\n\t2. Scripted operations\n\t3. Mission planner\n\t4. Raw Input")
 
     ui_input = input("")
     if not ui_input:
@@ -116,9 +116,6 @@ print("\nHello, welcome to MOANAINTERFACE (name pending on something better)\n\n
             print("Building yaw command...\nWhat would you like to do with it?\n\t1. Set to defined angle\n\t2. Go back")
             cmd_param = input("")
             if(cmd_param == 1):
-                # Find which direction
-                print("What direction would you like to set? (1 or 2 - TODO: find out which one is which)")
-                dir_param = input("")
                 # Find whhat angle
                 print("What angle would you like to set? (0-20)")
                 ang_param = input("")
@@ -127,12 +124,10 @@ print("\nHello, welcome to MOANAINTERFACE (name pending on something better)\n\n
                 # Build CAN command
                 # Write yaw ID
                 writeNumber(3)
-                # Write yaw direction
-                writeNumber(dir_param)
                 # Write yaw angle
                 writeNumber(ang_param)
                 # fill in 4 empty bytes
-                for i in range(5):
+                for i in range(6):
                       writeNumber(-1)
                 
             elif(cmd_param == 2):
@@ -199,8 +194,15 @@ print("\nHello, welcome to MOANAINTERFACE (name pending on something better)\n\n
         continue
         #TODO: might leave this for next year?
     elif(ui_input == 4):
-        print("\nToo bad bud, haven't written anything for this yet. Better luck next time! - last updated 4/21/21")
+        print("Reading raw input. Type any number other than -1 to send to CAN. Every 8 character a CAN message is sent. Type -1 to exit")
+        cmd_input = input("")
+        counter = 0
+        while(cmd_input != -1):
+            writeNumber(cmd_input)
+            print("counter at: ")
+            print(counter % 8)
+            cmd_input = input("")
     else:
         print("\nERROR: Invalid number, please try again with a number between 1 and 4")
-    writeNumber(var)
+    
     number = readNumber()
