@@ -197,11 +197,15 @@ while True:
     elif(ui_input == 4):
         print("Reading raw input. Type any number other than -1 to send to CAN. Every 8 character a CAN message is sent. Type -1 to exit")
         cmd_input = input("")
+        cmd_buf = []
         counter = 0
         while(cmd_input != -1):
             if(counter % 8 == 0 and counter != 0):
+                print("Sending command: ")
+                # TODO: Write confirmation and print out cmd_buf
                 for i in range(8):
-                    writeNumber(cmd_input)
+                    writeNumber(cmd_buf[i])
+            cmd_buf[counter] = cmd_input
             counter += 1
             print("counter at: ")
             print(counter % 8)
