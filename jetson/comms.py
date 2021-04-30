@@ -55,7 +55,7 @@ while True:
                 # Add thruster ID
                 # Add data parameters
                 
-                print("Sending command to run thruster at " + speed_param + "%...\n")
+                #print("Sending command to run thruster at " + speed_param + "%...\n")
                 # Write thruster ID
                 writeNumber(2)
                 # Write thruster direction
@@ -95,7 +95,7 @@ while True:
                 # Build CAN command
                 # Add thruster ID
                 # Add data parameters
-                print("Sending command to run thruster at " + speed_param + "% for " + dur_param + "ms...\n")
+                #print("Sending command to run thruster at " + speed_param + "% for " + dur_param + "ms...\n")
                 # Write thruster ID
                 writeNumber(2)
                 # Write thruster direction
@@ -123,7 +123,7 @@ while True:
                 print("What angle would you like to set? (0-20)")
                 ang_param = input("")
                 
-                print("Sending command to run yaw at " + dir_param + " with angle of " +  ang_param + "...")
+                #print("Sending command to run yaw at " + dir_param + " with angle of " +  ang_param + "...")
                 # Build CAN command
                 # Write yaw ID
                 writeNumber(3)
@@ -172,7 +172,7 @@ while True:
                 for i in range(5):
                       writeNumber(-1)
                 
-                print("Sending command to run thruster at " + speed_param + "%...\n")
+                #print("Sending command to run thruster at " + speed_param + "%...\n")
                 # Write thruster ID
                 writeNumber(2)
                 # Write thruster direction
