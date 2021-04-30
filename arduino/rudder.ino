@@ -56,11 +56,11 @@ void loop() {
   int temp, id;
   id = Msg.pt_data[0];
   if(id == 3){
-    Serial.print("accepted message\n");
-    Serial.print("Moving servo to position: ");
-    Serial.print(Msg.pt_data[2]);
-    Serial.print("\n");
-    temp = Msg.pt_data[2];
+//     Serial.print("accepted message\n");
+//     Serial.print("Moving servo to position: ");
+//     Serial.print(Msg.pt_data[1]);
+//     Serial.print("\n");
+    temp = Msg.pt_data[1];
     rudder.write(temp);
   }
 }
