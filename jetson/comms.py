@@ -202,9 +202,11 @@ while True:
             if(counter % 8 == 0 and counter != 0):
                 for i in range(8):
                     writeNumber(cmd_input)
+            counter += 1
             print("counter at: ")
             print(counter % 8)
             cmd_input = input("")
+
             # Data log TODO: Figure out how to log data
 #             sys.stdout = open("out.txt","a")
 #             print (readNumber())
