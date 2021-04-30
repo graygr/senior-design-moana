@@ -207,7 +207,7 @@ while True:
                     writeNumber(cmd_buf[i])
             cmd_buf[counter % 8] = cmd_input
             counter += 1
-            print("current cmd buffer: " + cmd_buf[0] + " " + cmd_buf[1] + " " + cmd_buf[2] + " " + cmd_buf[3] + " " + cmd_buf[4] + " " + cmd_buf[5] + " " + cmd_buf[6] + " " + cmd_buf[7])
+            print("current cmd buffer: " + str(cmd_buf[0]) + " " + str(cmd_buf[1]) + " " + str(cmd_buf[2]) + " " + str(cmd_buf[3]) + " " + str(cmd_buf[4]) + " " + str(cmd_buf[5]) + " " + str(cmd_buf[6]) + " " + str(cmd_buf[7]))
             
             print(counter)
             cmd_input = input("")
