@@ -1,5 +1,6 @@
 import smbus
 import time
+import sys
 
 bus = smbus.SMBus(0)
 
@@ -29,7 +30,11 @@ print("#         <><            <><       <><          <><     <><       ><>    
 print("#########################################################################################")
 
 while True:
+<<<<<<< HEAD
     print("\nHello, welcome to MOANAINTERFACE (name pending on something better)\n\nWhat mode would you like to operate in?\n\t1. Subsystem debug\n\t2. Scripted operations\n\t3. Mission planner\n\t4. I'm scared and need help")
+=======
+print("\nHello, welcome to MOANAINTERFACE (name pending on something better)\n\nWhat mode would you like to operate in?\n\t1. Subsystem debug\n\t2. Scripted operations\n\t3. Mission planner\n\t4. Raw Input")
+>>>>>>> 90365f070d75f360def38a33bfbf424f426f2daa
 
     ui_input = input("")
     if not ui_input:
@@ -116,9 +121,6 @@ while True:
             print("Building yaw command...\nWhat would you like to do with it?\n\t1. Set to defined angle\n\t2. Go back")
             cmd_param = input("")
             if(cmd_param == 1):
-                # Find which direction
-                print("What direction would you like to set? (1 or 2 - TODO: find out which one is which)")
-                dir_param = input("")
                 # Find whhat angle
                 print("What angle would you like to set? (0-20)")
                 ang_param = input("")
@@ -127,12 +129,10 @@ while True:
                 # Build CAN command
                 # Write yaw ID
                 writeNumber(3)
-                # Write yaw direction
-                writeNumber(dir_param)
                 # Write yaw angle
                 writeNumber(ang_param)
                 # fill in 4 empty bytes
-                for i in range(5):
+                for i in range(6):
                       writeNumber(-1)
                 
             elif(cmd_param == 2):
@@ -199,7 +199,23 @@ while True:
         continue
         #TODO: might leave this for next year?
     elif(ui_input == 4):
-        print("\nToo bad bud, haven't written anything for this yet. Better luck next time! - last updated 4/21/21")
+        print("Reading raw input. Type any number other than -1 to send to CAN. Every 8 character a CAN message is sent. Type -1 to exit")
+        cmd_input = input("")
+        counter = 0
+        while(cmd_input != -1):
+            writeNumber(cmd_input)
+            print("counter at: ")
+            print(counter % 8)
+            cmd_input = input("")
+            # Data log TODO: Figure out how to log data
+            sys.stdout = open("out.txt","a")
+            print (readNumber())
+            sys.stdout.close()
     else:
         print("\nERROR: Invalid number, please try again with a number between 1 and 4")
+<<<<<<< HEAD
     #number = readNumber()
+=======
+    
+    number = readNumber()
+>>>>>>> 90365f070d75f360def38a33bfbf424f426f2daa

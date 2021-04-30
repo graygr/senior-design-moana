@@ -24,7 +24,7 @@ uint8_t Buffer[8] = {};
 
 void setup() {
   // Assign PIN 6 to servo, with range between 1000ms and 2000ms
-  rudder.attach(6);
+  rudder.attach(6, 850, 2350);
  
   canInit(500000);            // Initialise CAN port. must be before Serial.begin
   Serial.begin(1000000);       // start serial port
@@ -56,6 +56,10 @@ void loop() {
   int temp, id;
   id = Msg.pt_data[0];
   if(id == 3){
+//     Serial.print("accepted message\n");
+//     Serial.print("Moving servo to position: ");
+//     Serial.print(Msg.pt_data[1]);
+//     Serial.print("\n");
     temp = Msg.pt_data[1];
     rudder.write(temp);
   }
