@@ -208,7 +208,7 @@ while True:
             cmd_buf[counter] = cmd_input
             counter += 1
             print("counter at: ")
-            print(counter % 8)
+            print(counter)
             cmd_input = input("")
 
             # Data log TODO: Figure out how to log data
