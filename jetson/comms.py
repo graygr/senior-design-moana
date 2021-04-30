@@ -1,5 +1,6 @@
 import smbus
 import time
+import sys
 
 bus = smbus.SMBus(0)
 
@@ -202,6 +203,10 @@ print("\nHello, welcome to MOANAINTERFACE (name pending on something better)\n\n
             print("counter at: ")
             print(counter % 8)
             cmd_input = input("")
+            # Data log TODO: Figure out how to log data
+            sys.stdout = open("out.txt","a")
+            print (readNumber())
+            sys.stdout.close()
     else:
         print("\nERROR: Invalid number, please try again with a number between 1 and 4")
     
