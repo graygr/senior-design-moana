@@ -39,24 +39,20 @@ void setup()
 
 void loop() {
     // If first byte is negative, then no new message
-	if(txBuffer[0] != -1)
-	{
-		// Setup CAN packet.
-		txMsg.ctrl.ide = MESSAGE_PROTOCOL;  // Set CAN protocol (0: CAN 2.0A, 1: CAN 2.0B)
-		txMsg.id.ext   = MESSAGE_ID;        // Set message ID
-		txMsg.dlc      = MESSAGE_LENGTH;    // Data length: 8 bytes
-		txMsg.ctrl.rtr = MESSAGE_RTR;       // Set rtr bit
+	clearBuffer(&Buffer[0]);
+	// Setup CAN packet.
+	txMsg.ctrl.ide = MESSAGE_PROTOCOL;  // Set CAN protocol (0: CAN 2.0A, 1: CAN 2.0B)
+	txMsg.id.ext   = MESSAGE_ID;        // Set message ID
+	txMsg.dlc      = MESSAGE_LENGTH;    // Data length: 8 bytes
+	txMsg.ctrl.rtr = MESSAGE_RTR;       // Set rtr bit
 
-		// Send command to the CAN port controller
-		txMsg.cmd = CMD_TX_DATA;       // send message
-		// Wait for the command to be accepted by the controller
-		while(can_cmd(&txMsg) != CAN_CMD_ACCEPTED);
-		// Wait for command to finish executing
-		while(can_get_status(&txMsg) == CAN_STATUS_NOT_COMPLETED);
-		// Transmit is now complete. Wait a bit and loop
-		// Set first byte to invalid number to indicate message buffer is now stale
-		txBuffer[0] = -1;
-	}
+	// Send command to the CAN port controller
+	txMsg.cmd = CMD_TX_DATA;       // send message
+	// Wait for the command to be accepted by the controller
+	while(can_cmd(&txMsg) != CAN_CMD_ACCEPTED);
+	// Wait for command to finish executing
+	while(can_get_status(&txMsg) == CAN_STATUS_NOT_COMPLETED);
+	// Transmit is now complete. Wait a bit and loop
 	delay(500);
 }
 
