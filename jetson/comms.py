@@ -199,7 +199,7 @@ while True:
         cmd_input = input("")
         counter = 0
         while(cmd_input != -1):
-            if(counter % 8 == 0 && counter != 0):
+            if(counter % 8 == 0 and counter != 0):
                 for i in range(8):
                     writeNumber(cmd_input)
             print("counter at: ")
