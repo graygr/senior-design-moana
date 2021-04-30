@@ -30,7 +30,7 @@ print("#         <><            <><       <><          <><     <><       ><>    
 print("#########################################################################################")
 
 while True:
-    print("\nHello, welcome to MOANAINTERFACE (name pending on something better)\n\nWhat mode would you like to operate in?\n\t1. Subsystem debug\n\t2. Scripted operations\n\t3. Mission planner\n\t4. I'm scared and need help")
+    print("\nHello, welcome to MOANAINTERFACE (name pending on something better)\n\nWhat mode would you like to operate in?\n\t1. Subsystem debug\n\t2. Scripted operations\n\t3. Mission planner\n\t4. Manual Input")
 
     ui_input = input("")
     if not ui_input:
@@ -199,14 +199,16 @@ while True:
         cmd_input = input("")
         counter = 0
         while(cmd_input != -1):
-            writeNumber(cmd_input)
+            if(counter % 8 == 0 && counter != 0):
+                for i in range(8):
+                    writeNumber(cmd_input)
             print("counter at: ")
             print(counter % 8)
             cmd_input = input("")
             # Data log TODO: Figure out how to log data
-            sys.stdout = open("out.txt","a")
-            print (readNumber())
-            sys.stdout.close()
+#             sys.stdout = open("out.txt","a")
+#             print (readNumber())
+#             sys.stdout.close()
     else:
         print("\nERROR: Invalid number, please try again with a number between 1 and 4")
     
