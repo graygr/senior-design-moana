@@ -205,7 +205,7 @@ while True:
                 # TODO: Write confirmation and print out cmd_buf
                 for i in range(8):
                     writeNumber(cmd_buf[i])
-            cmd_buf[counter] = cmd_input
+            cmd_buf[counter % 8] = cmd_input
             counter += 1
             print("counter at: ")
             print(counter)
