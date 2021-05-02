@@ -208,17 +208,22 @@ while True:
         cmd_buf = [None] * 8
         counter = 0
         while(cmd_input != -1):
+            cmd_input = input("")
             cmd_buf[counter % 8] = cmd_input
             counter += 1
             print("current cmd buffer: " + str(cmd_buf[0]) + " " + str(cmd_buf[1]) + " " + str(cmd_buf[2]) + " " + str(cmd_buf[3]) + " " + str(cmd_buf[4]) + " " + str(cmd_buf[5]) + " " + str(cmd_buf[6]) + " " + str(cmd_buf[7]))
             
             if((counter + 1) % 8 == 0 and counter != 0):
-                print("Sending command: ")
-                # TODO: Write confirmation and print out cmd_buf
-                for i in range(8):
-                    writeNumber(cmd_buf[i])
-
-            cmd_input = input("")
+                print("Sending command: " str(cmd_buf[0]) + " " + str(cmd_buf[1]) + " " + str(cmd_buf[2]) + " " + str(cmd_buf[3]) + " " + str(cmd_buf[4]) + " " + str(cmd_buf[5]) + " " + str(cmd_buf[6]) + " " + str(cmd_buf[7]))
+                print("Type 1 to confirm, 2 to deny and reset the buffer")
+                confirm_var = input("")
+                if(confirm_var == 1):
+                    for i in range(8):
+                        writeNumber(cmd_buf[i])
+                if(confirm_var == 2):
+                    for i in range(8):
+                        cmd_buf[i] = 255
+                
 
             # Data log TODO: Figure out how to log data
 #             sys.stdout = open("out.txt","a")
