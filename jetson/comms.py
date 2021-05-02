@@ -223,7 +223,7 @@ while True:
         
                 if(confirm_var == 2):
                     for i in range(8):
-                        cmd_buf[i] = 255
+                        cmd_buf[i] = [None]
                     print("Reading raw input. Type any number other than -1 to send to CAN. Every 8 character a CAN message is sent. Type -1 to exit")
             cmd_input = input("")
                 
