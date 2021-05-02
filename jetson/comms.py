@@ -205,15 +205,15 @@ while True:
     elif(ui_input == 4):
         print("Reading raw input. Type any number other than -1 to send to CAN. Every 8 character a CAN message is sent. Type -1 to exit")
         cmd_buf = [None] * 8
-        counter = 0
+        cmd_input = input("")
+        counter = 1
         while(cmd_input != -1):
-            cmd_input = input("")
             cmd_buf[counter % 8] = cmd_input
             counter += 1
             print("current cmd buffer: " + str(cmd_buf[0]) + " " + str(cmd_buf[1]) + " " + str(cmd_buf[2]) + " " + str(cmd_buf[3]) + " " + str(cmd_buf[4]) + " " + str(cmd_buf[5]) + " " + str(cmd_buf[6]) + " " + str(cmd_buf[7]))
             
             if((counter + 1) % 8 == 0 and counter != 0):
-                print("Sending command: " str(cmd_buf[0]) + " " + str(cmd_buf[1]) + " " + str(cmd_buf[2]) + " " + str(cmd_buf[3]) + " " + str(cmd_buf[4]) + " " + str(cmd_buf[5]) + " " + str(cmd_buf[6]) + " " + str(cmd_buf[7]))
+                print("Sending command: " + str(cmd_buf[0]) + " " + str(cmd_buf[1]) + " " + str(cmd_buf[2]) + " " + str(cmd_buf[3]) + " " + str(cmd_buf[4]) + " " + str(cmd_buf[5]) + " " + str(cmd_buf[6]) + " " + str(cmd_buf[7]))
                 print("Type 1 to confirm, 2 to deny and reset the buffer")
                 confirm_var = input("")
                 if(confirm_var == 1):
@@ -225,7 +225,7 @@ while True:
                     for i in range(8):
                         cmd_buf[i] = 255
                     print("Reading raw input. Type any number other than -1 to send to CAN. Every 8 character a CAN message is sent. Type -1 to exit")
-        
+            cmd_input = input("")
                 
 
             # Data log TODO: Figure out how to log data
@@ -235,4 +235,3 @@ while True:
     else:
         print("\nERROR: Invalid number, please try again with a number between 1 and 4")
     
-    number = readNumber()
