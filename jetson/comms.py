@@ -204,7 +204,6 @@ while True:
         #TODO: might leave this for next year?
     elif(ui_input == 4):
         print("Reading raw input. Type any number other than -1 to send to CAN. Every 8 character a CAN message is sent. Type -1 to exit")
-        cmd_input = input("")
         cmd_buf = [None] * 8
         counter = 0
         while(cmd_input != -1):
@@ -220,9 +219,13 @@ while True:
                 if(confirm_var == 1):
                     for i in range(8):
                         writeNumber(cmd_buf[i])
+                    print("Reading raw input. Type any number other than -1 to send to CAN. Every 8 character a CAN message is sent. Type -1 to exit")
+        
                 if(confirm_var == 2):
                     for i in range(8):
                         cmd_buf[i] = 255
+                    print("Reading raw input. Type any number other than -1 to send to CAN. Every 8 character a CAN message is sent. Type -1 to exit")
+        
                 
 
             # Data log TODO: Figure out how to log data
