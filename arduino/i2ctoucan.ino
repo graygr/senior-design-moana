@@ -9,7 +9,7 @@
 #include <ASTCanLib.h>
 #include <Wire.h>
 
-#define MESSAGE_ID        256       // Message ID
+#define MESSAGE_ID        1         // Message sender ID
 #define MESSAGE_PROTOCOL  1         // CAN protocol (0: CAN 2.0A, 1: CAN 2.0B)
 #define MESSAGE_LENGTH    8         // Data length: 8 bytes
 #define MESSAGE_RTR       0         // rtr bit
@@ -42,19 +42,8 @@ void setup()
 
 void loop() 
 {
-  // Listen for message on CAN network and write out if needed
-  rxMsg.cmd = CMD_RX_DATA;
-	
-  // Wait for the command to be accepted by the controller
-  while(can_cmd(&rxMsg) != CAN_CMD_ACCEPTED);
-  // Wait for command to finish executing
-  while(can_get_status(&rxMsg) == CAN_STATUS_NOT_COMPLETED);
-  // Data is now available in the message object
-  // Print received data to the terminal
-  sendCanData(&rxMsg);
-	
-  // If first byte is negative, then no new message
-  if(txBuffer[0] != 255)
+  // If message isn't complete, then wait
+  if(counter != 8)
   { 
     Serial.print("Sending message");
     // Setup CAN packet.
@@ -73,26 +62,18 @@ void loop()
     // Print out msg info to serial just in case
     Serial.print("CAN Message sent: \n");
     serialPrintData(&txMsg);
-      
-    // Send copy of the buffer back
-    // TODO: This
-    //sendData(&msgBuffer[0]);
-    
-    txBuffer[0] = 255;
+    counter = 0;
   }
   delay(500);
 }
 
 // This is called when we send a command over I2C to the CAN network
+// All messages are sent in segments of 8, so it tracks when one message ends with a global counter
 void receiveEvent(int bytes) {
   txBuffer[counter] = Wire.read();    // read one character from the I2C
   Serial.print(txBuffer[counter]);
   Serial.print("\n");
   ++counter;
-  if(counter > 7)
-  {
-    counter = 0;
-  }
 }
 
 // This is called when we need to send data back to the jetson from the CAN network over I2C
