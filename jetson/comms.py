@@ -1,6 +1,8 @@
 import smbus
 import time
 import sys
+import thread
+import time
 
 bus = smbus.SMBus(0)
 
@@ -11,9 +13,14 @@ def writeNumber(value):
     bus.write_byte(address, value)
     return -1
 
-def readNumber():
-    number = bus.read_byte(address)
-    return number
+# Function to run on thread to listen to anything coming over the I2C Bus
+def readBus(threadName):
+    while 1:
+        # TODO: Format the arduino code to write back the data in readable format
+        number = bus.read_byte(address)
+        # TODO: Store each line of CAN communication into array and append to CSV. Print for now
+        print("Reading CAN data from thread: ")
+        print(number)
 
 
 print("#########################################################################################")
@@ -30,7 +37,8 @@ print("#         <><            <><       <><          <><     <><       ><>    
 print("#########################################################################################")
 
 while True:
-    print("\nHello, welcome to MOANAINTERFACE (name pending on something better)\n\nWhat mode would you like to operate in?\n\t1. Subsystem debug\n\t2. Scripted operations\n\t3. Mission planner\n\t4. Manual Input")
+    thread.start_new_thread(readBus)
+    print("\nHello, welcome to Toucan, the CLI Interface to MOANA\nWhat mode would you like to operate in?\n\t1. Subsystem debug\n\t2. Scripted operations\n\t3. Mission planner\n\t4. Manual Input")
 
     ui_input = input("")
     if not ui_input:
@@ -38,6 +46,7 @@ while True:
     # Python is very dumb in switch statements so here goes the if else chain
     
     # This selection will control the debug mode
+    
     # Debug mode will allow the user to build individual commands to each subsystem and send them for testing and integration purposes 
     if(ui_input == 1):
         print("\nEntering debug mode...\n")
@@ -121,7 +130,6 @@ while True:
                 print("What angle would you like to set? (0-20)")
                 ang_param = input("")
                 
-                #print("Sending command to run yaw at " + dir_param + " with angle of " +  ang_param + "...")
                 # Build CAN command
                 # Write yaw ID
                 writeNumber(3)
