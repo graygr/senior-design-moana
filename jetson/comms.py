@@ -208,7 +208,7 @@ while True:
         cmd_buf = [None] * 8
         counter = 0
         while(cmd_input != -1):
-            if(counter % 8 == 0 and counter != 0):
+            if((counter + 1) % 8 == 0 and counter != 0):
                 print("Sending command: ")
                 # TODO: Write confirmation and print out cmd_buf
                 for i in range(8):
@@ -217,7 +217,6 @@ while True:
             counter += 1
             print("current cmd buffer: " + str(cmd_buf[0]) + " " + str(cmd_buf[1]) + " " + str(cmd_buf[2]) + " " + str(cmd_buf[3]) + " " + str(cmd_buf[4]) + " " + str(cmd_buf[5]) + " " + str(cmd_buf[6]) + " " + str(cmd_buf[7]))
             
-            print(counter)
             cmd_input = input("")
 
             # Data log TODO: Figure out how to log data
