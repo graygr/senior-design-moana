@@ -1,7 +1,7 @@
 import smbus
 import time
 import sys
-import thread
+# import thread
 import time
 
 bus = smbus.SMBus(0)
@@ -13,14 +13,14 @@ def writeNumber(value):
     bus.write_byte(address, value)
     return -1
 
-# Function to run on thread to listen to anything coming over the I2C Bus
-def readBus(threadName):
-    while 1:
-        # TODO: Format the arduino code to write back the data in readable format
-        number = bus.read_byte(address)
-        # TODO: Store each line of CAN communication into array and append to CSV. Print for now
-        print("Reading CAN data from thread: ")
-        print(number)
+# # Function to run on thread to listen to anything coming over the I2C Bus
+# def readBus(threadName):
+#     while 1:
+#         # TODO: Format the arduino code to write back the data in readable format
+#         number = bus.read_byte(address)
+#         # TODO: Store each line of CAN communication into array and append to CSV. Print for now
+#         print("Reading CAN data from thread: ")
+#         print(number)
 
 
 print("#########################################################################################")
@@ -37,7 +37,7 @@ print("#         <><            <><       <><          <><     <><       ><>    
 print("#########################################################################################")
 
 while True:
-    thread.start_new_thread(readBus)
+    # thread.start_new_thread(readBus)
     print("\nHello, welcome to Toucan, the CLI Interface to MOANA\nWhat mode would you like to operate in?\n\t1. Subsystem debug\n\t2. Scripted operations\n\t3. Mission planner\n\t4. Manual Input")
 
     ui_input = input("")
