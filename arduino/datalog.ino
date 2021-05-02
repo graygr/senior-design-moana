@@ -1,9 +1,7 @@
 /*
   SD card datalogger
-
   This example shows how to log data from three analog sensors
   to an SD card using the SD library.
-
   The circuit:
    analog sensors on analog ins 0, 1, and 2
    SD card attached to SPI bus as follows:
@@ -11,20 +9,17 @@
  ** MISO - pin 12
  ** CLK - pin 13
  ** CS - pin 10 (for MKRZero SD: SDCARD_SS_PIN)
-
   created  24 Nov 2010
   modified 9 Apr 2012
   by Tom Igoe
-
   This example code is in the public domain.
-
 */
 
 #include <SPI.h>
 #include <SD.h>
 #include <ASTCanLib.h>
 
-#define MESSAGE_ID        0       // Message ID
+#define MESSAGE_ID        6       // Message ID
 #define MESSAGE_PROTOCOL  1       // CAN protocol (0: CAN 2.0A, 1: CAN 2.0B)
 #define MESSAGE_LENGTH    8       // Data length: 8 bytes
 #define MESSAGE_RTR       0       // rtr bit
@@ -75,12 +70,12 @@ void setup() {
     data.print("Data 4");data.print(",");data.print("Data 5");data.print(",");
     data.print("Data 6");data.print(",");data.println("Data 7");data.println();
   }
-  data.close()
+  data.close();
  
 }
 
 void loop() {
-  int id, data[8];
+  int id, dataArr[8];
  
   // Clear the message buffer
   clearBuffer(&Buffer[0]);
@@ -94,29 +89,28 @@ void loop() {
   while(can_get_status(&Msg) == CAN_STATUS_NOT_COMPLETED);
   // Data is now available in the message object
 
-  id = msg.id.ext;
+  id = Msg.id.ext;
   for(int i = 0;i<7;i++){
-    data[i] = msg.pt_data[i];
+    dataArr[i] = Msg.pt_data[i];
   }
  
 
   // open the file. note that only one file can be open at a time,
   // so you have to close this one before opening another.
-  data = SD.open
+  data = SD.open("dataLogger.csv",FILE_WRITE);
 
   // if the file is available, write to it:
   if (data) {
     curTime = millis();
     data.print(curTime);data.print(",");data.print(id,DEC);data.print(",");
-    data.print(data[0],DEC);data.print(",");data.print(data[1],DEC);data.print(",");
-    data.print(data[2],DEC);data.print(",");data.print(data[3],DEC);data.print(",");
-    data.print(data[4],DEC);data.print(",");data.print(data[5],DEC);data.print(",");
-    data.print(data[5,DEC]);data.print(",");data.print(data[6],DEC);data.print(",");
-    data.println(data[7],DEC);
+    data.print(dataArr[0],DEC);data.print(",");data.print(dataArr[1],DEC);data.print(",");
+    data.print(dataArr[2],DEC);data.print(",");data.print(dataArr[3],DEC);data.print(",");
+    data.print(dataArr[4],DEC);data.print(",");data.print(dataArr[5],DEC);data.print(",");
+    data.print(dataArr[5,DEC]);data.print(",");data.print(dataArr[6],DEC);data.print(",");
+    data.println(dataArr[7],DEC);
    
     data.close();
-    // print to the serial port too:
-    Serial.println(dataString);
+    Serial.println("Saved");
   }
   // if the file isn't open, pop up an error:
   else {
