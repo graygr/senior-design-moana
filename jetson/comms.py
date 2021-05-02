@@ -206,7 +206,7 @@ while True:
         print("Reading raw input. Type any number other than -1 to send to CAN. Every 8 character a CAN message is sent. Type -1 to exit")
         cmd_buf = [None] * 8
         cmd_input = input("")
-        counter = 1
+        counter = 0
         while(cmd_input != -1):
             cmd_buf[counter % 8] = cmd_input
             counter += 1
