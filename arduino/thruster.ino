@@ -58,16 +58,22 @@ void loop() {
   // Print received data to the terminal
   serialPrintData(&Msg);
 
-  int temp, id;
+  int dir, power, id;
   id = Msg.pt_data[0];
   if(id == 2){
+    dir = Msg.pt_data[1];       // 1 is negative thrust, 2 is positive thrust
+    power = Msg.pt_data[2];     // Range 0 - 100
+    if(dir == 1){
+      power = power * -1;
+    }
+    
     temp = Msg.pt_data[1];
     temp = mapping(temp);
     thrustESC.write(temp);
   }
 }
 
-int mapping(int input){
+int mapping(int input){         // Map input values from 0 - 100 to blue robotics thruster pwm values
   input = input * 4 + 1500;
   return input;
 }
