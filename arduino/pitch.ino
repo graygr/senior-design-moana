@@ -105,7 +105,6 @@ void loop() {
   convert();
   Serial.println("sending to CAN");
   CANsend();
-
 */
 
   
@@ -143,13 +142,13 @@ void loop() {
         if (counter % 100 == 0) {
           counter = 1;
           Serial.println("GETTING SENSOR YDATA:");
-          sensors_event_t event;
-          bno.getEvent( & event);
-          ypos = event.orientation.y; 
+          //sensors_event_t event;
+          //bno.getEvent( & event);
+          //ypos = event.orientation.y; 
           
           //SEND ypos TO CAN HERE (2/2)
           //convert();
-          //CANsend();
+          CANsend();
           Serial.println(ypos);
         }
         delay(1);
@@ -161,6 +160,7 @@ void loop() {
       }
       Serial.println(currentLocation);
     }
+    sliderDone();
   }
 
 
@@ -249,6 +249,14 @@ void convert() {
   */
 }
 
+void sliderDone(){
+
+  for(int i = 0; i<41; i++){
+    CANsend();
+    delay(500);
+  }
+}
+
 void CANsend() {
   
   Serial.println("GETTING SENSOR YDATA:");
@@ -261,7 +269,7 @@ void CANsend() {
   convert();
   clearBuffer(&Buffer[0]);
   Msg.id.ext = MESSAGE_ID;         // Set message ID
-  Buffer[0] == 6;
+  Buffer[0] = 6;
   for (int i = 0; i < 7; i++) {
     if (i < 4) {
       Buffer[i + 1] = yposArray[i];
