@@ -11,9 +11,10 @@
 #define MESSAGE_ID 5 // Message ID
 #define MESSAGE_PROTOCOL 1 // CAN protocol (0: CAN 2.0A, 1: CAN 2.0B)
 #define MESSAGE_LENGTH 8 // Data length: 8 bytes
-#define MESSAGE_RTR 0 // rtr bit#include <Wire.h>
+#define MESSAGE_RTR 0 // rtr bit
+#include <Wire.h>
 
-#define BNO055_SAMPLERATE_DELAY_MS(10)
+#define BNO055_SAMPLERATE_DELAY_MS 10
 
 float xpos = 0;
 float ypos = 0;
@@ -39,7 +40,8 @@ const int ledPin = 13; // the number of the LED pinvoid calibrate();
 
 void CANsend();
 
-// variables will change:int buttonState = 0;         // variable for reading the pushbutton status
+// variables will change:
+int buttonState = 0;         // variable for reading the pushbutton status
 int velocity = 100;
 int x = 1;
 float stepsToX = 0;
@@ -52,7 +54,6 @@ float totalMass = 728.125 - addedSliderMass; //[Newtons]
 float separation = 1; //[inches]
 float Kp = .1;
 int yposArray[3];
-int request = 
 
 void setup() {
 
@@ -79,7 +80,8 @@ void setup() {
   pinMode(ledPin, OUTPUT);
   // initialize the pushbutton pin as an input:
   pinMode(buttonPin, INPUT);
-  // IMU Code  Serial.println("Orientation Sensor Test"); Serial.println("");  /* Initialise the sensor */
+  // IMU Code  
+  Serial.println("Orientation Sensor Test"); Serial.println("");  /* Initialise the sensor */
   if (!bno.begin()) {
     /* There was a problem detecting the BNO055 ... check your connections */
     Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
@@ -112,7 +114,7 @@ void loop() {
   
   Serial.println(xInput);
 
-  if (request == 0){
+  if (xInput == 100){
     CANsend();
   }
   else {
@@ -216,7 +218,7 @@ int CANin() {
     angle = angle * -1;
   }
   else if (dir == 3){
-    request = 1;
+    angle = 100;
   }
   return angle;
 }
