@@ -62,23 +62,23 @@ void loop() {
     if (id == 2) {
         dir = Msg.pt_data[1]; // 1 is negative thrust, 2 is positive thrust
         power = Msg.pt_data[2]; // Range 0 - 100 for percent power
-		duration = Msg.pt_data[3]; // 255 for indefinite, 1-254 are seconds
+    duration = Msg.pt_data[3]; // 255 for indefinite, 1-254 are seconds
         if (dir == 1) {
             power = power * -1;
         }
-		if(dur == 255)
-		{
-			// Turn on thruster indefinitely
-			// Call mapping function to take 0-100 scale and convert to PWM signal
-			thrustESC.write(mapping(power));	
-		}
-		else
-		{
-			// Turn on thruster for a bit
-			thrustESC.write(mapping(power));
-			delay(duration * 1000);
-			thrustESC.write(mapping(0));
-		}
+    if(duration == 255)
+    {
+      // Turn on thruster indefinitely
+      // Call mapping function to take 0-100 scale and convert to PWM signal
+      thrustESC.write(mapping(power));  
+    }
+    else
+    {
+      // Turn on thruster for a bit
+      thrustESC.write(mapping(power));
+      delay(duration * 1000);
+      thrustESC.write(mapping(0));
+    }
     }
 }
 
