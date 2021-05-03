@@ -23,7 +23,7 @@ st_cmd_t Msg;
 uint8_t Buffer[8] = {};
 
 void setup() {
-  // Assign PIN 6 to servo, with range between 1000ms and 2000ms
+  // Assign PIN 6 to servo, with range between 850ms and 2350ms
   rudder.attach(6, 850, 2350);
  
   canInit(500000);            // Initialise CAN port. must be before Serial.begin
