@@ -214,14 +214,15 @@ int CANin() {
   if (id == 5) {
     dir = Msg.pt_data[1]; // 1 is pitch forward, 2 is is pitch back
     angle = Msg.pt_data[2]; //between 0 and 20 currently
+    if (dir == 1) {
+      angle = angle * -1;
+    }
+    else if (dir == 3){
+      angle = 100;
+    }
+    return angle;
   }
-  if (dir == 1) {
-    angle = angle * -1;
-  }
-  else if (dir == 3){
-    angle = 100;
-  }
-  return angle;
+  return 50;
 }
 
 void convert() {
