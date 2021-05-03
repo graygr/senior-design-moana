@@ -118,6 +118,6 @@ void loop() {
   }
   // if the file isn't open, pop up an error:
   else {
-    Serial.println("error opening dataLogger.csv");
+    Serial.println("error opening data.txt");
   }
 }
