@@ -36,7 +36,8 @@ char inputBuffer[5];
 int number = 0; // constants won't change. They're used here to set pin numbers:
 
 const int buttonPin = 6; // the number of the pushbutton pin
-const int ledPin = 13; // the number of the LED pinvoid calibrate();
+const int ledPin = 13; // the number of the LED pin
+void calibrate();
 
 void CANsend();
 
