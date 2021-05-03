@@ -19,7 +19,7 @@
 #include <SD.h>
 #include <ASTCanLib.h>
 
-#define MESSAGE_ID        6       // Message ID
+#define MESSAGE_ID        6        // Message ID
 #define MESSAGE_PROTOCOL  1       // CAN protocol (0: CAN 2.0A, 1: CAN 2.0B)
 #define MESSAGE_LENGTH    8       // Data length: 8 bytes
 #define MESSAGE_RTR       0       // rtr bit
@@ -28,9 +28,7 @@ st_cmd_t Msg;
 
 uint8_t Buffer[8] = {};
 
-File data;
-
-const int chipSelect = 10;
+File file_out;
 
 unsigned long curTime;
 
@@ -54,24 +52,30 @@ void setup() {
   Serial.print("Initializing SD card...");
 
   // see if the card is present and can be initialized:
-  if (!SD.begin(chipSelect)) {
-    Serial.println("Card failed, or not present");
-    // don't do anything more:
+  if (!SD.begin(10)) {
+    Serial.println("initialization failed!");
     while (1);
   }
-  Serial.println("card initialized.");
+  Serial.println("initialization done.");
 
-  data = SD.open("dataLogger.csv",FILE_WRITE);
-  if(data){
+  // NOTICE: SD requires filenames to be 8 character or less. Otherwise it won't create the file. Fuck you arduino.
+  file_out = SD.open("data.txt", FILE_WRITE);
+
+  // If file open, ok to write :)
+  if(file_out) {
     Serial.println("File good");
-    data.print("Time");data.print(",");data.print("ID");data.print(",");
-    data.print("Data 0");data.print(",");data.print("Data 1");data.print(",");
-    data.print("Data 2");data.print(",");data.print("Data 3");data.print(",");
-    data.print("Data 4");data.print(",");data.print("Data 5");data.print(",");
-    data.print("Data 6");data.print(",");data.println("Data 7");data.println();
+    file_out.print("Time");file_out.print(",");file_out.print("ID");file_out.print(",");
+    file_out.print("Data 0");file_out.print(",");file_out.print("Data 1");file_out.print(",");
+    file_out.print("Data 2");file_out.print(",");file_out.print("Data 3");file_out.print(",");
+    file_out.print("Data 4");file_out.print(",");file_out.print("Data 5");file_out.print(",");
+    file_out.print("Data 6");file_out.print(",");file_out.println("Data 7");file_out.println();
+    file_out.close();
+    
   }
-  data.close();
- 
+  else
+  {
+    Serial.println("dataLogger.txt could not be opened :(");
+  }
 }
 
 void loop() {
@@ -97,23 +101,23 @@ void loop() {
 
   // open the file. note that only one file can be open at a time,
   // so you have to close this one before opening another.
-  data = SD.open("dataLogger.csv",FILE_WRITE);
+  file_out = SD.open("data.txt",FILE_WRITE);
 
   // if the file is available, write to it:
-  if (data) {
+  if (file_out) {
     curTime = millis();
-    data.print(curTime);data.print(",");data.print(id,DEC);data.print(",");
-    data.print(dataArr[0],DEC);data.print(",");data.print(dataArr[1],DEC);data.print(",");
-    data.print(dataArr[2],DEC);data.print(",");data.print(dataArr[3],DEC);data.print(",");
-    data.print(dataArr[4],DEC);data.print(",");data.print(dataArr[5],DEC);data.print(",");
-    data.print(dataArr[5,DEC]);data.print(",");data.print(dataArr[6],DEC);data.print(",");
-    data.println(dataArr[7],DEC);
+    file_out.print(curTime);file_out.print(",");file_out.print(id,DEC);file_out.print(",");
+    file_out.print(dataArr[0],DEC);file_out.print(",");file_out.print(dataArr[1],DEC);file_out.print(",");
+    file_out.print(dataArr[2],DEC);file_out.print(",");file_out.print(dataArr[3],DEC);file_out.print(",");
+    file_out.print(dataArr[4],DEC);file_out.print(",");file_out.print(dataArr[5],DEC);file_out.print(",");
+    file_out.print(dataArr[5,DEC]);file_out.print(",");file_out.print(dataArr[6],DEC);file_out.print(",");
+    file_out.println(dataArr[7],DEC);
    
-    data.close();
+    file_out.close();
     Serial.println("Saved");
   }
   // if the file isn't open, pop up an error:
   else {
-    Serial.println("error opening datalog.txt");
+    Serial.println("error opening dataLogger.csv");
   }
 }
