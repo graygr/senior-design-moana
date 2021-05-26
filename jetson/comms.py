@@ -1,7 +1,7 @@
 import smbus
 import time
 import sys
-# import thread
+import csv
 import time
 
 bus = smbus.SMBus(0)
@@ -50,7 +50,6 @@ while True:
     # Debug mode will allow the user to build individual commands to each subsystem and send them for testing and integration purposes 
     if(ui_input == 1):
         print("\nEntering debug mode...\n")
-        #TODO: write out step by step can message building to bugtest subsystem messaging
         print("\nWhat subsystem do you want to test?\n\t1. Thruster\n\t2. Yaw Control\n\t3. Depth Control\n\t4. Pitch Control")
         cmd_input = input("")
         if(cmd_input == 1):
@@ -194,14 +193,192 @@ while True:
                 
     elif(ui_input == 2):
         print("\nEntering scripted mission mode...\n")
-        print("\nThis feature is currently not implemented, please check back later...\n")
+        print("Please pick from the current list of missions below: ")
+        
+        # Use the OS library to walk through the list of files in the missions folder and print them out
+        counter = 1
+        # TODO: might have to store files outside the scope of this for loop
+        # TODO: test on jetson to see what code I have to run to get the list of files
+        for dirpath, dirnames, files in os.walk('.'):
+            print(f'Found directory: {dirpath}')
+            for file_name in files:
+                print(counter + ". " + file_name)
+                counter = counter + 1
+
+        print(files)
+
+        # Ask user to select which file they want to execute
+        print("\nWhich script would you like to execute?")
+        script_input = input("")
+
+        # Open file at that index
+        # TODO: this is temp until I can run on the jetson, find out how to open file index and build path out to open
+        with open(files[script_input], newline='') as csvfile:
+            screader = csv.reader(csvfile, delimiter=',')
+            line_no = 0
+            for row in screader:
+                # On even rows, send commands
+                if line_no % 2 == 0:
+                    # Read in each row and send the command, then wait the specified delay
+                    for element in row:
+                        writeNumber(element)
+                # On odd rows, read in the time delay
+                else:
+                    time.sleep(row[0])
+                # Increment line number
+                line_no = line_no + 1 
+        print("Script ended. If the vehicle is unrecoverable, best of luck!")
         continue
-        #TODO: write out 2-3 preplanned missions for initial testing in the field
+
     elif(ui_input == 3):
         print("\nEntering mission planner mode...\n")
-        print("\nThis feature is currently not implemented, please check back later...\n")
-        continue
-        #TODO: might leave this for next year?
+        print("What would you like to name this script?")
+        name_input = input("")
+
+        cmd_arr = [None] * 8
+
+        # TODO: make sure that this works
+        with open("missions/" + name_input + ".csv", mode='w') as csv_file:
+            csv_writer = csv.writer(csv_file, delimiter = ",")
+            while(1):
+                print("What subsystem do you want to command?\n1. Thruster\n\t2. Yaw Control\n\t3. Depth Control\n\t4. Pitch Control\n\t5. Exit")
+                sys_in = input("")
+
+                if(sys_in == 1):
+                    # Build thruster command
+                    print("Building thruster command...\nWhat would you like to do with the thruster?\n\t1. Turn on at set speed\n\t2. Turn off\n\t3. Turn on at set speed for set time\n\t4. Go back")
+                    cmd_param = input("")
+                    if(cmd_param == 1):
+                        # Turn thruster on to user defined speed
+                        print("What speed would you like? (0-100)")
+                        speed_param = input("")
+                        # Write thruster ID
+                        cmd_arr[0] = 2
+                        # Write thruster direction, 1 for backwards 2 for forwards
+                        cmd_arr[1] = 2
+                        # Write thruster speed
+                        cmd_arr[2] = speed_param
+                        # Write default duration (0 - run until stop)
+                        cmd_arr[3] = 0 
+                        # fill in 5 empty bytes
+                        cmd_arr[4] = -1
+                        cmd_arr[5] = -1
+                        cmd_arr[6] = -1
+                        cmd_arr[7] = -1
+
+                        
+                    elif(cmd_param == 2):
+                        # Turn thruster off
+
+                        # Write thruster ID
+                        cmd_arr[0] = 2
+                        # Write thruster direction
+                        cmd_arr[1] = 1
+                        # Write thruster speed
+                        cmd_arr[2] = 0
+                        # Write default duration (0 - run until stop)
+                        cmd_arr[3] = 0
+                        # fill in 4 empty bytes
+                        cmd_arr[4] = -1
+                        cmd_arr[5] = -1
+                        cmd_arr[6] = -1
+                        cmd_arr[7] = -1
+
+                    elif(cmd_param == 3):
+                        # Turn thruster on to user defined speed for user defined duration
+                        print("What speed would you like? (0-100)")
+                        speed_param = input("")
+                        print("What duration would you like?")
+                        dur_param = input("")
+                        
+                        # Write thruster ID
+                        cmd_arr[0] = 2
+                        # Write thruster direction
+                        cmd_arr[1] = 2
+                        # Write thruster speed
+                        cmd_arr[2] = speed_param
+                        # Write default duration (0 - run until stop)
+                        cmd_arr[3] = dur_param
+                        # fill in 4 empty bytes
+                        cmd_arr[4] = -1
+                        cmd_arr[5] = -1
+                        cmd_arr[6] = -1
+                        cmd_arr[7] = -1
+                    
+                    elif(cmd_param == 4):
+                        # Skip back to start of loop
+                        continue
+                elif(sys_in == 2):
+                    # Build yaw command
+                    print("Building yaw command...\nWhat would you like to do with it?\n\t1. Set to defined angle\n\t2. Go back")
+                    cmd_param = input("")
+                    if(cmd_param == 1):
+                        # Find what angle
+                        print("What angle would you like to set? (0-20)")
+                        ang_param = input("")
+                        
+                        print("Would you like positive or negative direction? (1 for neg, 2 for pos)")
+                        dir_param = input("")
+
+                        # Build CAN command
+                        # Write yaw ID
+                        cmd_arr[0] = 3
+                        # Write yaw angle
+                        cmd_arr[1] = ang_param
+                        # positive or negative
+                        cmd_arr[2] = dir_param 
+                        # fill in empty bytes
+                        cmd_arr[3] = -1
+                        cmd_arr[4] = -1
+                        cmd_arr[5] = -1
+                        cmd_arr[6] = -1
+                        cmd_arr[7] = -1
+
+                    elif(cmd_param == 2):
+                        print("Returning...\n")
+                        continue
+                
+                # Build depth control command (CURRENTLY UNFINISHED SYSTEM, TODO: Fill in once implemented)
+                elif(sys_in == 3):
+                    print("This subsystem is currently unfinished, please try annother option")
+                    continue
+                
+                # Build pitch control command
+                elif(sys_in == 4): 
+                    print("Building pitch command...\nWhat would you like to do with it?\n\t1. Set to defined angle\n\t2. Go back")
+                    cmd_param = input("")
+
+                    if(cmd_param == 1):
+                        # Store pitch control id
+                        cmd_arr[0] = 5
+                        # Store direction of pitch
+                        print("Positive or negative pitch angle? (1 for neg, 2 for pos)")
+                        pitch_dir = input("")
+                        cmd_arr[1] = pitch_dir
+                        # Store angle of pitch (0-12)
+                        print("What angle? (0-12 degrees)")
+                        pitch_ang = input("")
+                        cmd_arr[2] = pitch_ang
+                        cmd_arr[3] = -1
+                        cmd_arr[4] = -1
+                        cmd_arr[5] = -1
+                        cmd_arr[6] = -1
+                        cmd_arr[7] = -1
+
+                    elif(cmd_param == 2):
+                        print("Returning to menu...\n")
+                        continue
+
+                # Break out of command builder
+                elif(sys_in == 5):
+                    break
+
+                # Store command, then store delay
+                csv_writer.writerow(cmd_arr)
+                print("What delay would you like (seconds)?\n")
+                time_del = input("")
+                csv_write.writerow([time_del]) 
+
     elif(ui_input == 4):
         print("Reading raw input. Type any number other than -1 to send to CAN. Every 8 character a CAN message is sent. Type -1 to exit")
         cmd_buf = [None] * 8
@@ -227,11 +404,6 @@ while True:
                     print("Reading raw input. Type any number other than -1 to send to CAN. Every 8 character a CAN message is sent. Type -1 to exit")
             cmd_input = input("")
                 
-
-            # Data log TODO: Figure out how to log data
-#             sys.stdout = open("out.txt","a")
-#             print (readNumber())
-#             sys.stdout.close()
     else:
         print("\nERROR: Invalid number, please try again with a number between 1 and 4")
     
