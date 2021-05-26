@@ -407,5 +407,5 @@ while True:
         print("Have a nice day!")
         exit()
     else:
-        print("\nERROR: Invalid number, please try again with a number between 1 and 4")
+        print("\nERROR: Invalid number, please try again with a number between 1 and 5")
     
