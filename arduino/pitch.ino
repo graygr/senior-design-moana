@@ -118,7 +118,7 @@ void loop() {
     CANsend();
   }
   else {
-    if (xInput > -20 && xInput < 20) {
+    if (xInput > -12 && xInput < 12) {
       //xInput = Serial.parseFloat();
       Serial.print("I recieved the input: ");
       Serial.println(xInput); 
@@ -262,7 +262,7 @@ void CANsend() {
   Serial.println("GETTING SENSOR YDATA:");
   sensors_event_t event;
   bno.getEvent( & event);
-  ypos = event.orientation.y;
+  ypos = event.orientation.x;
   Serial.println("Outside ypos : ");
   Serial.println(ypos);
   
