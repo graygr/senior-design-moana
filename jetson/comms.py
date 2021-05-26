@@ -3,6 +3,7 @@ import time
 import sys
 import csv
 import time
+import os
 
 bus = smbus.SMBus(0)
 
@@ -38,7 +39,7 @@ print("#########################################################################
 
 while True:
     # thread.start_new_thread(readBus)
-    print("\nHello, welcome to Toucan, the CLI Interface to MOANA\nWhat mode would you like to operate in?\n\t1. Subsystem debug\n\t2. Scripted operations\n\t3. Mission planner\n\t4. Manual Input")
+    print("\nHello, welcome to Toucan, the CLI Interface to MOANA\nWhat mode would you like to operate in?\n\t1. Subsystem debug\n\t2. Scripted operations\n\t3. Mission planner\n\t4. Manual Input\n\t5. Exit Program")
 
     ui_input = input("")
     if not ui_input:
@@ -199,13 +200,10 @@ while True:
         counter = 1
         # TODO: might have to store files outside the scope of this for loop
         # TODO: test on jetson to see what code I have to run to get the list of files
-        for dirpath, dirnames, files in os.walk('.'):
-            print(f'Found directory: {dirpath}')
+        for dirpath, dirnames, files in os.walk('missions'):
             for file_name in files:
-                print(counter + ". " + file_name)
+                print("\t" + str(counter) + ". " + file_name)
                 counter = counter + 1
-
-        print(files)
 
         # Ask user to select which file they want to execute
         print("\nWhich script would you like to execute?")
@@ -213,7 +211,7 @@ while True:
 
         # Open file at that index
         # TODO: this is temp until I can run on the jetson, find out how to open file index and build path out to open
-        with open(files[script_input], newline='') as csvfile:
+        with open("missions/" + files[script_input - 1]) as csvfile:
             screader = csv.reader(csvfile, delimiter=',')
             line_no = 0
             for row in screader:
@@ -227,21 +225,22 @@ while True:
                     time.sleep(row[0])
                 # Increment line number
                 line_no = line_no + 1 
-        print("Script ended. If the vehicle is unrecoverable, best of luck!")
+        print("Script ended. If the vehicle is unrecoverable at this point, best of luck!")
         continue
 
     elif(ui_input == 3):
         print("\nEntering mission planner mode...\n")
         print("What would you like to name this script?")
-        name_input = input("")
+        # In python2, need raw input. Otherwise, tries to run string as python code
+        name_input = raw_input("")
 
         cmd_arr = [None] * 8
 
         # TODO: make sure that this works
-        with open("missions/" + name_input + ".csv", mode='w') as csv_file:
+        with open("missions/" + str(name_input) + ".csv", mode='w') as csv_file:
             csv_writer = csv.writer(csv_file, delimiter = ",")
             while(1):
-                print("What subsystem do you want to command?\n1. Thruster\n\t2. Yaw Control\n\t3. Depth Control\n\t4. Pitch Control\n\t5. Exit")
+                print("What subsystem do you want to command?\n\t1. Thruster\n\t2. Yaw Control\n\t3. Depth Control\n\t4. Pitch Control\n\t5. Exit")
                 sys_in = input("")
 
                 if(sys_in == 1):
@@ -377,7 +376,7 @@ while True:
                 csv_writer.writerow(cmd_arr)
                 print("What delay would you like (seconds)?\n")
                 time_del = input("")
-                csv_write.writerow([time_del]) 
+                csv_writer.writerow([time_del]) 
 
     elif(ui_input == 4):
         print("Reading raw input. Type any number other than -1 to send to CAN. Every 8 character a CAN message is sent. Type -1 to exit")
@@ -404,6 +403,9 @@ while True:
                     print("Reading raw input. Type any number other than -1 to send to CAN. Every 8 character a CAN message is sent. Type -1 to exit")
             cmd_input = input("")
                 
+    elif(ui_input == 5):
+        print("Have a nice day!")
+        exit()
     else:
         print("\nERROR: Invalid number, please try again with a number between 1 and 4")
     
