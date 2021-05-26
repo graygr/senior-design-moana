@@ -251,7 +251,7 @@ void convert() {
 
 void sliderDone(){
 
-  for(int i = 0; i<41; i++){
+  for(int i = 0; i<20; i++){
     CANsend();
     delay(500);
   }
@@ -262,7 +262,7 @@ void CANsend() {
   Serial.println("GETTING SENSOR YDATA:");
   sensors_event_t event;
   bno.getEvent( & event);
-  ypos = event.orientation.x;
+  ypos = event.orientation.z;
   Serial.println("Outside ypos : ");
   Serial.println(ypos);
   
