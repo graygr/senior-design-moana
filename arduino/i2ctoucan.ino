@@ -43,7 +43,7 @@ void setup()
 void loop() 
 {
   // If message isn't complete, then wait
-  if(counter != 8)
+  if(counter == 8)
   { 
     Serial.print("Sending message");
     // Setup CAN packet.
@@ -158,20 +158,20 @@ void sendCanData(st_cmd_t *msg){
 // To undo, reverse process
 float three_byte_arr_to_float()
 {
-	int sign;
-	
-	if(conv_arr[0] == 0)
-	{
-		return 0;
-	}
-	else if(conv_arr[0] == 1)
-	{
-		sign = -1;
-	}
-	else if(conv_arr[0] == 2)
-	{
-		sign = 1;
-	}
-	
-	return (conv_arr[1] + (conv_arr[2] / 100)) * sign;
+  int sign;
+  
+  if(conv_arr[0] == 0)
+  {
+    return 0;
+  }
+  else if(conv_arr[0] == 1)
+  {
+    sign = -1;
+  }
+  else if(conv_arr[0] == 2)
+  {
+    sign = 1;
+  }
+  
+  return (conv_arr[1] + (conv_arr[2] / 100)) * sign;
 }
